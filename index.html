@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matching Game</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        body {
+          background-color: #f7f5f2;
+        }
+        img {
+            position: absolute;
+        }
+        .game-area{
+            height: 500px;  
+            background-image: url('images/tree_bark.jpg'); 
+            background-size: cover; 
+            background-repeat: no-repeat; 
+            overflow: hidden;
+        }
+        #rightSide{
+            border-left: 1px solid;
+        }
+    </style>
+</head>
+<body onload="generateButterflies()">
+    <div class="container">
+        <div class="row">
+            <h1>Matching Game</h1>
+        </div>
+        <div class="row">
+            <p>Click on the extra butterfly on the left</p>
+        </div>
+        <div class="row mb-4 mt-2">
+            <button type="button" id="reloadBtn" class="btn btn-outline-primary btn-sm" onclick="window.location.reload();">Restart the Game</button>
+        </div>
+        <div class="row">
+            <div class="col-12 col-lg-6 game-area" id="leftSide"></div>
+            <div class="col-12 col-lg-6 game-area" id="rightSide"></div>
+        </div>
+    </div>
+
+    <script>
+        let numberOfButterflies = 5;
+        let level = 1;
+        const theLeftSide = document.querySelector("#leftSide");
+        const theRightSide = document.querySelector("#rightSide");
+        
+        function generateButterflies(){
+            for (let i = 0; i<numberOfButterflies; i++) {
+                let butterfly = document.createElement('img');
+                butterfly.src = 'images/butterfly.png';
+                butterfly.width = 90; 
+                butterfly.height = 50;  
+                let randomTop = Math.floor((theLeftSide.clientHeight - 50) * Math.random());
+                let randomLeft = Math.floor((theLeftSide.clientWidth - 90) * Math.random());
+                butterfly.style.top = randomTop + 'px';
+                butterfly.style.left = randomLeft + 'px';
+                theLeftSide.appendChild(butterfly);
+            }
+            const leftSideImages = theLeftSide.cloneNode(true);
+            leftSideImages.removeChild(leftSideImages.lastChild);
+            while (leftSideImages.firstChild) {
+                theRightSide.appendChild(leftSideImages.firstChild);
+            }
+            theLeftSide.lastChild.addEventListener('click', nextLevel);
+            document.body.addEventListener('click', gameOver);
+        }
+
+        function nextLevel(event) {
+            event.stopPropagation();
+            numberOfButterflies += 5;
+            level += 1;
+            while (theRightSide.firstChild) {
+                theRightSide.removeChild(theRightSide.firstChild);
+            }
+            while (theLeftSide.firstChild) {
+                theLeftSide.removeChild(theLeftSide.firstChild);
+            }
+            generateButterflies();
+        }
+
+        function gameOver(event){
+            if (event.target !== document.getElementById('reloadBtn')) {
+                alert(`The game is over. You failed at level ${level}`);
+                theLeftSide.lastChild.removeEventListener('click', nextLevel);
+                document.body.removeEventListener('click', gameOver);
+            }
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
